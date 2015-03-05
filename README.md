@@ -88,3 +88,4 @@ sliderSelector | string | The selector to `.find()` within the containing elemen
 easingFunction | function | The easing function to be used for the elasticity of the first and final pull cancelation. | `EaseOutQuad` from [Gizma](http://gizma.com/easing/)
 maxEasingPercentage | float | The maximum percentage of the width of one slide that can be pulled as part of the first and final slides. This is used in conjuction with `easingFunction`. | 0.25
 onChange | function | A callback to be used when a banner changed. This callback will be given a single argument containing the 1-based index of the slide that is now showing. | `null`
+bannerOffset | function | Should return the pixel offset of the banner at the 1-based index given in the first argument. | `(container_width * (index - 1))`

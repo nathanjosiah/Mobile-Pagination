@@ -19,7 +19,7 @@ $.widget('nathanjosiah.mobilePagination',{
 			return $(window).width() < 768;
 		},
 		onChange: null,
-		bannerWidth: function(index) {
+		bannerOffset: function(index) {
 			var container_width = this.$container.width();
 			return (container_width * (index - 1));
 		}
@@ -165,7 +165,7 @@ $.widget('nathanjosiah.mobilePagination',{
 			this.options.onChange.call(this.$container,new_index);
 		}
 		if(this.options.isMobile()) {
-			this.scrollBanners($.proxy(this.options.bannerWidth,this)(this.fb.slide_index) * -1);
+			this.scrollBanners($.proxy(this.options.bannerOffset,this)(this.fb.slide_index) * -1);
 		}
 		else {
 			this.$slider.css('-webkit-transform','');
