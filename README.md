@@ -4,7 +4,8 @@ A simple pagination widget to add swiping capabilities to a list of items on mob
 Example Use
 --
 
-> Live example can be [found here](http://jsfiddle.net/nathanjosiah/ggsmf64u/).
+> Basic example show can be [found here](http://jsfiddle.net/nathanjosiah/ggsmf64u/).
+> Example with pagination can be [found here](http://jsfiddle.net/nathanjosiah/ggsmf64u/3/).
 
 __html__
 
@@ -19,6 +20,7 @@ __html__
 </div>
 <span id="console"></span>
 <script src="jquery.js" />
+<script src="jquery-ui.js" />
 <script src="mobile-pagination.js" />
 ```
 
