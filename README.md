@@ -5,7 +5,7 @@ Example Use
 --
 
 > Basic example show can be [found here](http://jsfiddle.net/nathanjosiah/ggsmf64u/).
-> Example with pagination can be [found here](http://jsfiddle.net/nathanjosiah/ggsmf64u/3/).
+> Example with pagination can be [found here](http://jsfiddle.net/nathanjosiah/ggsmf64u/4/).
 
 __html__
 
