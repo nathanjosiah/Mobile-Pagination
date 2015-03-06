@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Simple Pagination Demo</title>
+
+	<style>
+	html,body {
+		margin: 0;
+		padding: 0;
+	}
+
+	/************
+	 * Example 1
+	 ************/
+	#e1 {
+		width: 300px;
+		margin: 0 auto;
+		position: relative;
+		overflow: hidden;
+	}
+	#e1 ul {
+		position: relative;
+		display: block;
+		margin: 0;
+		padding:0;
+		width: 1200px;
+		-webkit-backface-visibility: hidden;
+		-webkit-transform: translate(0,0);
+		transform: translate(0,0);
+		-webkit-transition: -webkit-transform ease-out 300ms;
+		-webkit-transition: transform ease-out 300ms;
+		transition: -webkit-transform ease-out 300ms;
+		transition: transform ease-out 300ms;
+	}
+	#e1 ul.is_touching {
+		-webkit-transition: none;
+		transition: none;
+	}
+	#e1 li {
+		list-style: none;
+		display: block;
+		padding: 0;
+		margin: 0;
+		float: left;
+		width: 300px;
+		height: 200px;
+		background-color: #ff0;
+	}
+	</style>
+</head>
+<body>
+	<h1>Example 1</h1>
+	<div id="e1">
+		<ul>
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+		</ul>
+	</div>
+	<span id="e1-console"></span>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+	<script src="https://rawgit.com/nathanjosiah/simple-pagination/1e3e641b7ceba36f3a42cc0c4284dfe068548004/simple-pagination.js"></script>
+	<script>
+	$(function() {
+		$('#e1').simplePagination();
+	});
+	</script>
+</body>
+</html>
