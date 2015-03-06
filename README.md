@@ -92,6 +92,7 @@ easingFunction | function | The easing function to be used for the elasticity of
 maxEasingPercentage | float | The maximum percentage of the width of one slide that can be pulled as part of the first and final slides. This is used in conjuction with `easingFunction`. | 0.25
 onChange | function | A callback to be used when a banner changed. This callback will be given a single argument containing the 1-based index of the slide that is now showing. | `null`
 bannerOffset | function | Should return the pixel offset of the banner at the 1-based index given in the first argument. | `$container.width() * (index - 1)`
+shouldUseTransforms | function or bool | Whether or not the slider should be positioned with CSS transforms or using the `left` property. | Sniffing for native transform support.
 
 Available Methods
 --
@@ -132,8 +133,6 @@ $container.get(0).addEventListener('touchend',function(e) {
 Browser Compatibility
 --
 
-While there are plans of expanding support, currently, without a polyfill for transforms in IE < 9 this plugin requires:
-
 IE | Chrome | Firefox | Safari | Opera
 ----- | ------ | ------- | ------ | -----
-9+ | any | 16+ | any | 12.1+
+8+ | any | 16+ | any | 12.1+

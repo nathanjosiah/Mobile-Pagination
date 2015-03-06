@@ -22,8 +22,19 @@ $.widget('nathanjosiah.mobilePagination',{
 		bannerOffset: function(index) {
 			var container_width = this.$container.width();
 			return (container_width * (index - 1));
+		},
+		shouldUseTransforms: function() {
+			var prefixes = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' ');
+			var div = document.createElement('div');
+			for(var i = 0; i < prefixes.length; i++) {
+				if(div && div.style[prefixes[i]] !== undefined) {
+					return prefixes[i];
+				}
+			}
+			return false;
 		}
 	},
+	shouldUseTransforms: null,
 	$window: $(window),
 	$container: null,
 	$slider: null,
@@ -131,9 +142,12 @@ $.widget('nathanjosiah.mobilePagination',{
 			this.gotoBanner(this.fb.slide_index);
 		}
 		else {
-			this.$slider.css('-ms-transform','');
-			this.$slider.css('-webkit-transform','');
-			this.$slider.css('transform','');
+			var val = '';
+			this.$slider.css({
+				'-ms-transform': val,
+				'-webkit-transform': val,
+				transform: val
+			});
 		}
 	},
 	getProp: function(what) {
@@ -149,6 +163,13 @@ $.widget('nathanjosiah.mobilePagination',{
 		this.bannerCount = this.$slider.children().length;
 		this.id = Math.random() * 10000;
 		var that = this;
+
+		if(typeof this.options.shouldUseTransforms === 'function') {
+			this.shouldUseTransforms = this.options.shouldUseTransforms.call(this);
+		}
+		else {
+			this.shouldUseTransforms = !!this.options.shouldUseTransforms;
+		}
 
 		this.$container
 		.on('touchstart.' + this.namespace,this.getProp('onTouchStart'))
@@ -169,15 +190,26 @@ $.widget('nathanjosiah.mobilePagination',{
 			this.scrollBanners($.proxy(this.options.bannerOffset,this)(this.fb.slide_index) * -1);
 		}
 		else {
-			this.$slider.css('-ms-transform','');
-			this.$slider.css('-webkit-transform','');
-			this.$slider.css('transform','');
+			var val = '';
+			this.$slider.css({
+				'-ms-transform': val,
+				'-webkit-transform': val,
+				transform: val
+			});
 		}
 	},
 	scrollBanners: function(offset) {
-		this.$slider.css('-ms-transform','translate(' + offset + 'px,0)');
-		this.$slider.css('-webkit-transform','translate(' + offset + 'px,0)');
-		this.$slider.css('transform','translate(' + offset + 'px,0)');
+		if(this.shouldUseTransforms) {
+			var val = 'translate(' + offset + 'px,0)';
+			this.$slider.css({
+				'-ms-transform': val,
+				'-webkit-transform': val,
+				transform: val
+			});
+		}
+		else {
+			this.$slider.css('left',offset + 'px');
+		}
 		this.fb.current.scroll = offset;
 	}
 });
