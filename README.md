@@ -135,5 +135,5 @@ Browser Compatibility
 While there are plans of expanding support, currently, without a polyfill for transforms in IE < 9 this plugin requires:
 
 IE | Chrome | Firefox | Safari | Opera
--- | ------ | ------- | ------ | -----
+----- | ------ | ------- | ------ | -----
 9+ | any | 16+ | any | 12.1+
