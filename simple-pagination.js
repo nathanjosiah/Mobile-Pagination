@@ -1,6 +1,6 @@
 /**
  * @author Nathan Smith <nathanjosiah@gmail.com>
- * @link https://github.com/nathanjosiah/mobile-pagination
+ * @link https://github.com/nathanjosiah/Simple-Pagination
  */
 $.widget('nathanjosiah.simplePagination',{
 	options: {
