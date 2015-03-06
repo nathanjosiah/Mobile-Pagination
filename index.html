@@ -9,10 +9,14 @@
 		margin: 0;
 		padding: 0;
 	}
+	#content {
+		width: 960px;
+		margin: 0 auto;
+	}
+	#e1 li, #e2 li {
+		font-size: 72px;
+	}
 
-	/************
-	 * Example 1
-	 ************/
 	#e1 {
 		width: 300px;
 		margin: 0 auto;
@@ -47,26 +51,181 @@
 		height: 200px;
 		background-color: #ff0;
 	}
+
+
+
+	#e2 {
+		width: 100%;
+		position: relative;
+		overflow: hidden;
+	}
+	#e2 ul {
+		position: relative;
+		display: block;
+		margin: 0;
+		padding:0;
+		width: 400%;
+		padding-top: 56.25%;
+		-webkit-backface-visibility: hidden;
+		-webkit-transform: translate(0,0);
+		transform: translate(0,0);
+		-webkit-transition: -webkit-transform ease-out 300ms;
+		-webkit-transition: transform ease-out 300ms;
+		transition: -webkit-transform ease-out 300ms;
+		transition: transform ease-out 300ms;
+	}
+	#e2 ul.is_touching {
+		-webkit-transition: none;
+		transition: none;
+	}
+	#e2 li {
+		list-style: none;
+		display: block;
+		padding: 0;
+		margin: 0;
+		position: absolute;
+		top: 0;
+		width: 25%;
+		height: 100%;
+		background-color: #f0f;
+	}
+	#e2 li:nth-child(2) {left:25%;}
+	#e2 li:nth-child(3) {left:50%;}
+	#e2 li:nth-child(4) {left:75%;}
+
+
+	#e3 {
+		width: 300px;
+		margin: 0 auto;
+		position: relative;
+		overflow: hidden;
+	}
+	#e3-items {
+		position: relative;
+		display: block;
+		margin: 0;
+		padding:0;
+		width: 1200px;
+		-webkit-backface-visibility: hidden;
+		-webkit-transform: translate(0,0);
+		transform: translate(0,0);
+		-webkit-transition: -webkit-transform ease-out 300ms;
+		-webkit-transition: transform ease-out 300ms;
+		transition: -webkit-transform ease-out 300ms;
+		transition: transform ease-out 300ms;
+	}
+	#e3-items.is_touching {
+		-webkit-transition: none;
+		transition: none;
+	}
+	#e3-items li {
+		list-style: none;
+		display: block;
+		padding: 0;
+		margin: 0;
+		float: left;
+		width: 300px;
+		height: 200px;
+		background-color: #ff0;
+	}
+	#e3-dots {
+		display: block;
+		position: absolute;
+		bottom: 20px;
+		left: 50%;
+		z-index: 20;
+		margin: 0 0 0 -16px;
+		padding: 0;
+	}
+	#e3-dots li {
+		display: block;
+		list-style: none;
+		float: left;
+		width: 6px;
+		height: 6px;
+		margin: 0 0 0 3px;
+		padding: 0;
+		border: 1px solid #FFFFFF;
+		border-radius: 4px;
+		box-shadow: 0px 0px 5px #000000;
+	}
+	#e3-dots li:first-child {
+		margin-left: 0;
+	}
+
+	.fb-1-sel #e3-dots li:nth-child(1) {background-color: #000000;}
+	.fb-2-sel #e3-dots li:nth-child(2) {background-color: #000000;}
+	.fb-3-sel #e3-dots li:nth-child(3) {background-color: #000000;}
+	.fb-4-sel #e3-dots li:nth-child(4) {background-color: #000000;}
+
+
+
+	@media (max-width: 959px) {
+		#content {
+			width: 100%;
+			margin: 0;
+		}
+	}
 	</style>
 </head>
 <body>
-	<h1>Example 1</h1>
-	<div id="e1">
-		<ul>
-			<li>1</li>
-			<li>2</li>
-			<li>3</li>
-			<li>4</li>
-		</ul>
+	<div id="content">
+		<h1>Example 1</h1>
+		<div id="e1">
+			<ul>
+				<li>1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+			</ul>
+		</div>
+
+		<h1>Example 2</h1>
+		<div id="e2">
+			<ul>
+				<li>1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+			</ul>
+		</div>
+
+		<h1>Example 3</h1>
+		<div id="e3" class="fb-1-sel">
+			<ul id="e3-dots">
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
+			<ul id="e3-items">
+				<li>1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+			</ul>
+		</div>
 	</div>
-	<span id="e1-console"></span>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
-	<script src="https://rawgit.com/nathanjosiah/simple-pagination/1e3e641b7ceba36f3a42cc0c4284dfe068548004/simple-pagination.js"></script>
+	<script src="https://rawgit.com/nathanjosiah/simple-pagination/73e7eb3eb39dc29b9bfe42463d1bee93cce39f03/simple-pagination.js"></script>
 	<script>
 	$(function() {
 		$('#e1').simplePagination();
+		$('#e2').simplePagination();
+
+		var possible_banner_classes = 'fb-1-sel fb-2-sel fb-3-sel fb-4-sel';
+		$('#e3').simplePagination({
+			onChange: function(index) {
+				this.removeClass(possible_banner_classes).addClass('fb-' + index + '-sel');
+				$('#console').text('Page is now  #' + index);
+			},
+			sliderSelector: '#e3-items',
+		});
+		$('#e3-dots').on('click','li',function(e) {
+			$('#e3').simplePagination('gotoPage',$(this).index() + 1);
+		});
 	});
 	</script>
 </body>
