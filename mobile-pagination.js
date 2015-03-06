@@ -1,215 +1,128 @@
-/**
- * @author Nathan Smith <nathanjosiah@gmail.com>
- * @link https://github.com/nathanjosiah/mobile-pagination
- */
-$.widget('nathanjosiah.mobilePagination',{
-	options: {
-		touchingClass: 'is_touching',
-		swipeThreshold: 10 * (window.devicePixelRatio || 1),
-		swipeTimeThreshold: 300,
-		sliderSelector: '> ul',
-
-		//EaseOutQuad http://gizma.com/easing/
-		easingFunction: function (t,b,c,d) {
-			t /= d;
-			return -c * t*(t-2) + b;
-		},
-		maxEasingPercentage: 0.25,
-		isMobile: function() {
-			return $(window).width() < 768;
-		},
-		onChange: null,
-		bannerOffset: function(index) {
-			var container_width = this.$container.width();
-			return (container_width * (index - 1));
-		},
-		shouldUseTransforms: function() {
-			var prefixes = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' ');
-			var div = document.createElement('div');
-			for(var i = 0; i < prefixes.length; i++) {
-				if(div && div.style[prefixes[i]] !== undefined) {
-					return prefixes[i];
-				}
-			}
-			return false;
-		}
-	},
-	shouldUseTransforms: null,
-	$window: $(window),
-	$container: null,
-	$slider: null,
-	bannerCount: null,
-	ignoreTouch: false,
-	id: null,
-	namespace: 'mobilePagination',
-	touches: {
-		start_time: null,
-		start: {},
-		start_relative: {},
-		delta: {}
-	},
-	fb: {
-		start: {
-			scroll: 0,
-			container_offset: {}
-		},
-		slide_index: 1,
-		current: {
-			scroll: 0
-		}
-	},
-	onTouchEnd: function(e) {
-		if(this.ignoreTouch) {
-			this.ignoreTouch = false;
-			return true;
-		}
-		this.$slider.removeClass(this.options.touchingClass);
-		var now = new Date();
-		var start_time = this.touches.start_time.getTime();
-		var duration = now.getTime() - start_time;
-
-		// Detect a swipe
-		if(duration < this.options.swipeTimeThreshold && Math.abs(this.touches.delta.x) > this.options.swipeThreshold) {
-			var slide_direction = (this.touches.delta.x < 0 ? 1 : -1);
-			var new_index = (slide_direction === -1 ? this.fb.slide_index - 1 : this.fb.slide_index + 1);
-
-			if(new_index === 0) this.gotoBanner(1);
-			else if(new_index === this.bannerCount+1) this.gotoBanner(this.bannerCount);
-			else this.gotoBanner(new_index);
-		}
-		// Normal drag
-		else {
-			var container_width = this.$container.width();
-			var total_width = this.$slider.width();
-			var half_slide_width = (container_width * 0.5);
-			var percentage = parseInt((((this.fb.current.scroll * -1) + half_slide_width) / total_width) * 100);
-			var slide_index = Math.ceil(percentage/((container_width / total_width) * 100));
-
-			if(slide_index > this.bannerCount) slide_index = this.bannerCount;
-			else if(slide_index < 1) slide_index = 1;
-			this.gotoBanner(slide_index);
-		}
-	},
-	onTouchMove: function(e) {
-		if(this.ignoreTouch) return true;
-		var touch = e.originalEvent.touches[0];
-		this.touches.delta = {
-			x: touch.clientX - this.touches.start.x,
-			y: touch.clientY - this.touches.start.y
-		};
-		// User is trying to scroll vertically
-		if(Math.abs(this.touches.delta.x) < Math.abs(this.touches.delta.y)) {
-			return true;
-		}
-		e.preventDefault();
-
-		var scroll_to = this.fb.start.scroll + this.touches.delta.x;
-
-		if(this.options.easingFunction) {
-			var container_width = this.$container.width();
-			var max_elastic_pull = container_width * this.options.maxEasingPercentage;
-			// The user is trying to pull the first or last banner
-			if(this.fb.slide_index === this.bannerCount && this.touches.delta.x < 0) {
-				scroll_to = this.fb.start.scroll - this.options.easingFunction(this.touches.delta.x * -1,0,max_elastic_pull,container_width);
-			}
-			else if(this.fb.slide_index === 1 && this.touches.delta.x > 0) {
-				scroll_to = this.fb.start.scroll + this.options.easingFunction(this.touches.delta.x,0,max_elastic_pull,container_width);
-			}
-		}
-		this.scrollBanners(scroll_to);
-	},
-	onTouchStart: function(e) {
-		if(!this.options.isMobile()) {
-			this.ignoreTouch = true;
-			return true;
-		}
-		this.$slider.addClass(this.options.touchingClass);
-		var touch = e.originalEvent.touches[0];
-		this.touches.start = {
-			x: touch.clientX,
-			y: touch.clientY
-		};
-		this.fb.start.container_offset = this.$container.offset();
-		this.fb.start.scroll = this.fb.current.scroll;
-		this.touches.start_relative = {
-			x: touch.clientX - this.fb.start.container_offset.left + this.fb.start.scroll,
-			y: touch.clientY - this.fb.start.container_offset.top
-		}
-		this.touches.start_time = new Date();
-	},
-	onResize: function() {
-		if(this.options.isMobile()) {
-			this.gotoBanner(this.fb.slide_index);
-		}
-		else {
-			var val = '';
-			this.$slider.css({
-				'-ms-transform': val,
-				'-webkit-transform': val,
-				transform: val
-			});
-		}
-	},
-	getProp: function(what) {
-		var prop = this[what];
-		if(typeof prop === 'function') {
-			prop = $.proxy(prop,this);
-		}
-		return prop;
-	},
-	_create: function() {
-		this.$container = $(this.element);
-		this.$slider = this.$container.find(this.options.sliderSelector);
-		this.bannerCount = this.$slider.children().length;
-		this.id = Math.random() * 10000;
-		var that = this;
-
-		if(typeof this.options.shouldUseTransforms === 'function') {
-			this.shouldUseTransforms = this.options.shouldUseTransforms.call(this);
-		}
-		else {
-			this.shouldUseTransforms = !!this.options.shouldUseTransforms;
-		}
-
-		this.$container
-		.on('touchstart.' + this.namespace,this.getProp('onTouchStart'))
-		.on('touchmove.' + this.namespace,this.getProp('onTouchMove'))
-		.on('touchend.' + this.namespace + ' touchcancel.' + this.namespace,this.getProp('onTouchEnd'));
-		this.$window.on('resize.' + this.namespace + this.id + ' orientationchange.' + this.namespace + this.id,this.getProp('onResize'));
-	},
-	_destroy: function() {
-		this.$window.off('resize.' + this.namespace + this.id + ' orientationchange.' + this.namespace + this.id);
-		this.$container.off('.' + this.namespace);
-	},
-	gotoBanner: function(new_index) {
-		this.fb.slide_index = new_index;
-		if(this.options.onChange) {
-			this.options.onChange.call(this.$container,new_index);
-		}
-		if(this.options.isMobile()) {
-			this.scrollBanners($.proxy(this.options.bannerOffset,this)(this.fb.slide_index) * -1);
-		}
-		else {
-			var val = '';
-			this.$slider.css({
-				'-ms-transform': val,
-				'-webkit-transform': val,
-				transform: val
-			});
-		}
-	},
-	scrollBanners: function(offset) {
-		if(this.shouldUseTransforms) {
-			var val = 'translate(' + offset + 'px,0)';
-			this.$slider.css({
-				'-ms-transform': val,
-				'-webkit-transform': val,
-				transform: val
-			});
-		}
-		else {
-			this.$slider.css('left',offset + 'px');
-		}
-		this.fb.current.scroll = offset;
+<?php
+$banners = $this->banners;
+?>
+<link rel="stylesheet" href="<?=HORG_AUTO_URL?>/includes/partials/home-feature-banners/banners.css" />
+<script src="<?=HORG_AUTO_URL?>/includes/js/calc-polyfill.min.js"></script>
+<!--[if lte IE 8]>
+<style>
+#container-pusher {
+	display: none;
+}
+#feature-banner-container {
+	position: relative;
+	top: 0;
+	margin-top: -160px;
+}
+#feature-banner-nav {
+	margin-top: 16px;
+}
+#feature-banners {
+	margin: 0 auto;
+	width: 960px;
+	height: 368px;
+	padding-top: 0;
+}
+</style>
+<![endif]-->
+<!--CONTENT_AREA_MARKER-->
+<section id="feature-banners-wrapper">
+	<div id="feature-banner-container" class="feature-banner-1-selected">
+		<ul id="banner-indicator-wrapper">
+			<li class="dot feature-banner-1-dot"></li>
+			<li class="dot feature-banner-2-dot"></li>
+			<li class="dot feature-banner-3-dot"></li>
+			<li class="dot feature-banner-4-dot"></li>
+		</ul>
+		<ul id="feature-banners">
+<?php
+foreach($banners as $index => $banner) {
+	$srcset = '';
+	foreach($banner['images'] as $width => $url) {
+		$srcset .= $url . ' ' . $width . 'w,';
 	}
-});
+	$srcset = substr($srcset,0,-1);
+?>
+			<li class="feature-banner <?if($index==0) echo'current';?>" id="feature-banner-<?=$index+1?>">
+<?	if(isset($banner['video'])) { ?>
+				<div id="feature-banner-<?=$index+1?>-video" class="feature-banner-video"></div>
+<?	} ?>
+				<img class="feature-banner-image" <?=($index > 0 ? 'data-' : '')?>srcset="<?=$srcset?>" sizes="(max-width: 479px) 100vw,(min-width: 480px) and (max-width: 767px) 480px, 100vw" />
+				<div class="feature-banner-content">
+					<a href="<?=$banner['button_url']?>" class="right hui-button feature-banner-button"><?=$banner['button_text']?></a>
+					<div class="feature-banner-text"><?=$banner['text']?></div>
+				</div>
+			</li>
+<? } ?>
+		</ul>
+	</div>
+	<nav id="feature-banner-nav">
+		<ul>
+<?php
+foreach($banners as $index => $banner) {
+	$srcset = '';
+	foreach($banner['thumbnail_images'] as $width => $url) {
+		$srcset .= $url . ' ' . $width . 'w,';
+	}
+	$srcset = substr($srcset,0,-1);
+?>
+			<li>
+				<a href="#feature-banner-<?=$index+1?>" class="feature-banner-nav-item">
+					<img class="feature-banner-nav-image"
+						srcset="<?=$srcset?>"
+						sizes="(max-width: 479px) 25vw, 24.25vw"
+					/>
+					<div class="feature-banner-nav-text"><?=$banner['thumbnail_text']?></div>
+				</a>
+			</li>
+<? } ?>
+		</ul>
+		<div class="clear"></div>
+	</nav>
+</section>
+<!--FOOTER_SCRIPT_MARKER-->
+<script src="<?=HORG_AUTO_URL?>/includes/js/plugins/simple-pagination.js"></script>
+<script src="<?=HORG_AUTO_URL?>/includes/partials/home-feature-banners/banners.js"></script>
+<script>
+try {
+<?php
+foreach($banners as $index => $banner) {
+	if(!isset($banner['video'])) continue;
+	$video = $banner['video'];
+?>
+	jwplayer('feature-banner-<?=$index+1?>-video').setup({
+		width: '100%',
+		height: '100%',
+		aspectratio: '16:9',
+		wmode: 'transparent',
+		bgcolor: '#000000',
+		skin: 'glow',
+		primary: 'flash',
+		androidhls: true,
+		ga: {},
+		autostart: <?=(isset($video['autoplay']) && $video['autoplay'] ? 'true' : 'false')?>,
+		playlist: [{
+			sources: [{
+				file: '<?=$video['m3u8']?>'
+			},{
+				file: '<?=$video['mp4']?>'
+			}]
+		}],
+		events: {
+			onBeforePlay: function() {
+				$('#feature-banner-<?=$index+1?>').addClass('video-playing');
+				$('body').addClass('feature-banner-video-playing').removeClass('feature-banner-video-paused');
+			},
+			onComplete: function() {
+				$('#feature-banner-<?=$index+1?>').removeClass('video-playing video-paused');
+				$('body').removeClass('feature-banner-video-playing feature-banner-video-paused');
+			},
+			onPause: function() {
+				$('#feature-banner-<?=$index+1?>').removeClass('video-playing').addClass('video-paused');
+				$('body').removeClass('feature-banner-video-playing').addClass('feature-banner-video-paused');
+			}
+		}
+	});
+<? } ?>
+}
+catch(e){}
+</script>
