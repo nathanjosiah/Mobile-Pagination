@@ -2,7 +2,7 @@
  * @author Nathan Smith <nathanjosiah@gmail.com>
  * @link https://github.com/nathanjosiah/mobile-pagination
  */
-$.widget('nathanjosiah.mobilePagination',{
+$.widget('nathanjosiah.simplePagination',{
 	options: {
 		touchingClass: 'is_touching',
 		swipeThreshold: 10 * (window.devicePixelRatio || 1),
@@ -15,11 +15,9 @@ $.widget('nathanjosiah.mobilePagination',{
 			return -c * t*(t-2) + b;
 		},
 		maxEasingPercentage: 0.25,
-		isMobile: function() {
-			return $(window).width() < 768;
-		},
+		enabled: true,
 		onChange: null,
-		bannerOffset: function(index) {
+		pageOffset: function(index) {
 			var container_width = this.$container.width();
 			return (container_width * (index - 1));
 		},
@@ -34,14 +32,20 @@ $.widget('nathanjosiah.mobilePagination',{
 			return false;
 		}
 	},
+	isEnabled: function() {
+		if(typeof this.options.enabled === 'function') {
+			return this.options.enabled.call(this);
+		}
+		return !!this.options.enabled;
+	},
 	shouldUseTransforms: null,
 	$window: $(window),
 	$container: null,
 	$slider: null,
-	bannerCount: null,
+	pageCount: null,
 	ignoreTouch: false,
 	id: null,
-	namespace: 'mobilePagination',
+	namespace: 'simplePagination',
 	touches: {
 		start_time: null,
 		start: {},
@@ -73,9 +77,9 @@ $.widget('nathanjosiah.mobilePagination',{
 			var slide_direction = (this.touches.delta.x < 0 ? 1 : -1);
 			var new_index = (slide_direction === -1 ? this.fb.slide_index - 1 : this.fb.slide_index + 1);
 
-			if(new_index === 0) this.gotoBanner(1);
-			else if(new_index === this.bannerCount+1) this.gotoBanner(this.bannerCount);
-			else this.gotoBanner(new_index);
+			if(new_index === 0) this.gotoPage(1);
+			else if(new_index === this.pageCount+1) this.gotoPage(this.pageCount);
+			else this.gotoPage(new_index);
 		}
 		// Normal drag
 		else {
@@ -85,9 +89,9 @@ $.widget('nathanjosiah.mobilePagination',{
 			var percentage = parseInt((((this.fb.current.scroll * -1) + half_slide_width) / total_width) * 100);
 			var slide_index = Math.ceil(percentage/((container_width / total_width) * 100));
 
-			if(slide_index > this.bannerCount) slide_index = this.bannerCount;
+			if(slide_index > this.pageCount) slide_index = this.pageCount;
 			else if(slide_index < 1) slide_index = 1;
-			this.gotoBanner(slide_index);
+			this.gotoPage(slide_index);
 		}
 	},
 	onTouchMove: function(e) {
@@ -108,18 +112,18 @@ $.widget('nathanjosiah.mobilePagination',{
 		if(this.options.easingFunction) {
 			var container_width = this.$container.width();
 			var max_elastic_pull = container_width * this.options.maxEasingPercentage;
-			// The user is trying to pull the first or last banner
-			if(this.fb.slide_index === this.bannerCount && this.touches.delta.x < 0) {
+			// The user is trying to pull the first or last page
+			if(this.fb.slide_index === this.pageCount && this.touches.delta.x < 0) {
 				scroll_to = this.fb.start.scroll - this.options.easingFunction(this.touches.delta.x * -1,0,max_elastic_pull,container_width);
 			}
 			else if(this.fb.slide_index === 1 && this.touches.delta.x > 0) {
 				scroll_to = this.fb.start.scroll + this.options.easingFunction(this.touches.delta.x,0,max_elastic_pull,container_width);
 			}
 		}
-		this.scrollBanners(scroll_to);
+		this.scrollPages(scroll_to);
 	},
 	onTouchStart: function(e) {
-		if(!this.options.isMobile()) {
+		if(!this.isEnabled()) {
 			this.ignoreTouch = true;
 			return true;
 		}
@@ -138,8 +142,8 @@ $.widget('nathanjosiah.mobilePagination',{
 		this.touches.start_time = new Date();
 	},
 	onResize: function() {
-		if(this.options.isMobile()) {
-			this.gotoBanner(this.fb.slide_index);
+		if(this.isEnabled()) {
+			this.gotoPage(this.fb.slide_index);
 		}
 		else {
 			var val = '';
@@ -160,7 +164,7 @@ $.widget('nathanjosiah.mobilePagination',{
 	_create: function() {
 		this.$container = $(this.element);
 		this.$slider = this.$container.find(this.options.sliderSelector);
-		this.bannerCount = this.$slider.children().length;
+		this.pageCount = this.$slider.children().length;
 		this.id = Math.random() * 10000;
 		var that = this;
 
@@ -181,13 +185,13 @@ $.widget('nathanjosiah.mobilePagination',{
 		this.$window.off('resize.' + this.namespace + this.id + ' orientationchange.' + this.namespace + this.id);
 		this.$container.off('.' + this.namespace);
 	},
-	gotoBanner: function(new_index) {
+	gotoPage: function(new_index) {
 		this.fb.slide_index = new_index;
 		if(this.options.onChange) {
 			this.options.onChange.call(this.$container,new_index);
 		}
-		if(this.options.isMobile()) {
-			this.scrollBanners($.proxy(this.options.bannerOffset,this)(this.fb.slide_index) * -1);
+		if(this.isEnabled()) {
+			this.scrollPages($.proxy(this.options.pageOffset,this)(this.fb.slide_index) * -1);
 		}
 		else {
 			var val = '';
@@ -198,7 +202,7 @@ $.widget('nathanjosiah.mobilePagination',{
 			});
 		}
 	},
-	scrollBanners: function(offset) {
+	scrollPages: function(offset) {
 		if(this.shouldUseTransforms) {
 			var val = 'translate(' + offset + 'px,0)';
 			this.$slider.css({
