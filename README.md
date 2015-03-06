@@ -52,6 +52,7 @@ ul {
     padding:0;
     width: 1200px;
     -webkit-backface-visibility: hidden;
+    -ms-transform: translate(0,0);
     -webkit-transform: translate(0,0);
     transform: translate(0,0);
     -webkit-transition: -webkit-transform ease-out 300ms;
@@ -90,24 +91,25 @@ sliderSelector | string | The selector to `.find()` within the containing elemen
 easingFunction | function | The easing function to be used for the elasticity of the first and final pull cancelation. | `EaseOutQuad` from [Gizma](http://gizma.com/easing/)
 maxEasingPercentage | float | The maximum percentage of the width of one slide that can be pulled as part of the first and final slides. This is used in conjuction with `easingFunction`. | 0.25
 onChange | function | A callback to be used when a banner changed. This callback will be given a single argument containing the 1-based index of the slide that is now showing. | `null`
-bannerOffset | function | Should return the pixel offset of the banner at the 1-based index given in the first argument. | `(container_width * (index - 1))`
+bannerOffset | function | Should return the pixel offset of the banner at the 1-based index given in the first argument. | `$container.width() * (index - 1)`
 
 Available Methods
----
+--
 
 method | arguments | description
 ------ | --------- | -----------
 gotoBanner | `new_index` => The 1-based index of the slide to be visible | Used to scroll to a banner. All applicable callbacks will be fired.
 scrollBanners | `offset` => The pixel offset to scroll into visibility | Used to scroll the slider to an arbitrary offset.
-getProp | `prop_name` => The internal property to retrieve. | _Advanced!_ Used to grab an internal property of the instance of the widget. `this` will be set to the internal instance for functions. An example can be found below.
+getProp | `prop_name` => The internal property to retrieve. | _Advanced!_ Used to grab an internal property of the instance of the widget. For functions, `this` will be set to the internal instance. An example can be found below.
 
 
 Advanced Use
----
+--
 
 Some of the internal properties can be accessed if needed through the use of the `getProp` method. For example, let's say you need to prevent all `touchend` events at a capture level if the touch delta is within a certain threshold, you can do that as show here:
 
 ```js
+var $container = $('div').mobilePagination();
 var stopTouchEndPropagation = false;
 var preventDefaultTouchEndThreshold = 10;
 $container.on('touchmove',function(e) {
@@ -126,3 +128,12 @@ $container.get(0).addEventListener('touchend',function(e) {
 	}
 },true);
 ```
+
+Browser Compatibility
+--
+
+While there are plans of expanding support, currently, without a polyfill for transforms in IE < 9 this plugin requires:
+
+IE | Chrome | Firefox | Safari | Opera
+-- | ------ | ------- | ------ | -----
+9+ | any | 16+ | any | 12.1+

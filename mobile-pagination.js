@@ -131,6 +131,7 @@ $.widget('nathanjosiah.mobilePagination',{
 			this.gotoBanner(this.fb.slide_index);
 		}
 		else {
+			this.$slider.css('-ms-transform','');
 			this.$slider.css('-webkit-transform','');
 			this.$slider.css('transform','');
 		}
@@ -168,11 +169,13 @@ $.widget('nathanjosiah.mobilePagination',{
 			this.scrollBanners($.proxy(this.options.bannerOffset,this)(this.fb.slide_index) * -1);
 		}
 		else {
+			this.$slider.css('-ms-transform','');
 			this.$slider.css('-webkit-transform','');
 			this.$slider.css('transform','');
 		}
 	},
 	scrollBanners: function(offset) {
+		this.$slider.css('-ms-transform','translate(' + offset + 'px,0)');
 		this.$slider.css('-webkit-transform','translate(' + offset + 'px,0)');
 		this.$slider.css('transform','translate(' + offset + 'px,0)');
 		this.fb.current.scroll = offset;
