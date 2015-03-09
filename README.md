@@ -55,6 +55,7 @@ ul {
     padding:0;
     width: 1200px;
     -webkit-backface-visibility: hidden;
+	will-change: transform;
     -ms-transform: translate(0,0);
     -webkit-transform: translate(0,0);
     transform: translate(0,0);
@@ -96,6 +97,8 @@ maxEasingPercentage | float | The maximum percentage of the width of one slide t
 onChange | function | A callback to be used when a page changed. This callback will be given a single argument containing the 1-based index of the slide that is now showing. | `null`
 pageOffset | function | Should return the pixel offset of the page at the 1-based index given in the first argument. | `$container.width() * (index - 1)`
 shouldUseTransforms | function or bool | Whether or not the slider should be positioned with CSS transforms or using the `left` property. | Sniffing for native transform support.
+dragPageThresholdPercentage | float | The percentage of a page that must be dragged to switch between pages. Note that this is separate from the swipe thresholds. | 0.5
+pageSelector | string | The selector to `.find()` within the `sliderSelector` element to get the elements that represent the pages. | `> li`
 
 Available Methods
 --

@@ -7,6 +7,7 @@ $.widget('nathanjosiah.simplePagination',{
 		touchingClass: 'is_touching',
 		swipeThreshold: 10 * (window.devicePixelRatio || 1),
 		swipeTimeThreshold: 300,
+		dragPageThresholdPercentage: 0.5,
 		sliderSelector: '> ul',
 
 		//EaseOutQuad http://gizma.com/easing/
@@ -21,6 +22,7 @@ $.widget('nathanjosiah.simplePagination',{
 			var container_width = this.$container.width();
 			return (container_width * (index - 1));
 		},
+		pageSelector: '> li',
 		shouldUseTransforms: function() {
 			var prefixes = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' ');
 			var div = document.createElement('div');
@@ -42,6 +44,7 @@ $.widget('nathanjosiah.simplePagination',{
 	$window: $(window),
 	$container: null,
 	$slider: null,
+	pages: null,
 	pageCount: null,
 	ignoreTouch: false,
 	id: null,
@@ -71,28 +74,29 @@ $.widget('nathanjosiah.simplePagination',{
 		var now = new Date();
 		var start_time = this.touches.start_time.getTime();
 		var duration = now.getTime() - start_time;
+		var new_slide_index;
 
 		// Detect a swipe
 		if(duration < this.options.swipeTimeThreshold && Math.abs(this.touches.delta.x) > this.options.swipeThreshold) {
 			var slide_direction = (this.touches.delta.x < 0 ? 1 : -1);
-			var new_index = (slide_direction === -1 ? this.fb.slide_index - 1 : this.fb.slide_index + 1);
+			new_slide_index = (slide_direction === -1 ? this.fb.slide_index - 1 : this.fb.slide_index + 1);
 
-			if(new_index === 0) this.gotoPage(1);
-			else if(new_index === this.pageCount+1) this.gotoPage(this.pageCount);
-			else this.gotoPage(new_index);
+			if(new_slide_index === 0) new_slide_index = 1;
+			else if(new_slide_index === this.pageCount+1) new_slide_index = this.pageCount;
 		}
 		// Normal drag
 		else {
 			var container_width = this.$container.width();
 			var total_width = this.$slider.width();
-			var half_slide_width = (container_width * 0.5);
+			var half_slide_width = (container_width * this.options.dragPageThresholdPercentage);
 			var percentage = parseInt((((this.fb.current.scroll * -1) + half_slide_width) / total_width) * 100);
-			var slide_index = Math.ceil(percentage/((container_width / total_width) * 100));
+			new_slide_index = Math.ceil(percentage/((container_width / total_width) * 100));
 
-			if(slide_index > this.pageCount) slide_index = this.pageCount;
-			else if(slide_index < 1) slide_index = 1;
-			this.gotoPage(slide_index);
+			if(new_slide_index > this.pageCount) new_slide_index = this.pageCount;
+			else if(new_slide_index < 1) new_slide_index = 1;
 		}
+
+		this.gotoPage(new_slide_index);
 	},
 	onTouchMove: function(e) {
 		if(this.ignoreTouch) return true;
@@ -161,11 +165,15 @@ $.widget('nathanjosiah.simplePagination',{
 		}
 		return prop;
 	},
+	_refresh: function() {
+		this.$slider = this.$container.find(this.options.sliderSelector);
+		this.$pages = this.$slider.find(this.options.pageSelector);
+		this.pageCount = this.$pages.length;
+	},
 	_create: function() {
 		this.$container = $(this.element);
-		this.$slider = this.$container.find(this.options.sliderSelector);
-		this.pageCount = this.$slider.children().length;
 		this.id = Math.random() * 10000;
+		this._refresh();
 		var that = this;
 
 		if(typeof this.options.shouldUseTransforms === 'function') {
@@ -187,9 +195,6 @@ $.widget('nathanjosiah.simplePagination',{
 	},
 	gotoPage: function(new_index) {
 		this.fb.slide_index = new_index;
-		if(this.options.onChange) {
-			this.options.onChange.call(this.$container,new_index);
-		}
 		if(this.isEnabled()) {
 			this.scrollPages($.proxy(this.options.pageOffset,this)(this.fb.slide_index) * -1);
 		}
@@ -200,6 +205,9 @@ $.widget('nathanjosiah.simplePagination',{
 				'-webkit-transform': val,
 				transform: val
 			});
+		}
+		if(this.options.onChange) {
+			this.options.onChange.call(this.$container,this.fb.slide_index);
 		}
 	},
 	scrollPages: function(offset) {
