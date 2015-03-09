@@ -6,7 +6,7 @@ you need it) to define just how the user can interact with it.
 Example Use
 --
 
-> Live examples can be found at [nathanjosiah.github.com/simple-pagination](https://nathanjosiah.github.com/simple-pagination)
+> Live examples can be found at [nathanjosiah.github.com/Simple-Pagination](http://nathanjosiah.github.io/Simple-Pagination/)
 
 __html__
 
