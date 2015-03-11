@@ -2,16 +2,29 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 	<title>Simple Pagination Demo</title>
-
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
 	<style>
-	html,body {
-		margin: 0;
-		padding: 0;
+	body {
+		background-color: #F2F2F2;
 	}
-	#content {
-		width: 960px;
-		margin: 0 auto;
+	#main-content {
+		margin-top: 50px;
+		border-width: 0 1px 0 1px;
+		border-color: #D8D8D8;
+		border-style: solid;
+		background-color: #FFFFFF;
+		padding-bottom: 30px;
+	}
+	#main-footer {
+		color: #999999;
+		background: #FFFFFF;
+		border-top: 1px solid #D8D8D8;
+	}
+	#footer-content {
+		padding-top: 10px;
+		padding-bottom: 10px;
 	}
 	#e1 li, #e2 li {
 		font-size: 72px;
@@ -49,9 +62,34 @@
 		float: left;
 		width: 300px;
 		height: 200px;
-		background-color: #ff0;
 	}
-
+	#e1 .control {
+		position: absolute;
+		top: 50%;
+		z-index: 10;
+		display: block;
+		width: 20px;
+		height: 60px;
+		line-height: 60px;
+		margin-top: -30px;
+		font-size: 44px;
+		text-align: center;
+		color: #FFFFFF;
+		text-decoration: none;
+		text-shadow: 0 0 3px rgba(0,0,0,0.5);
+		opacity: 0;
+		-webkit-transition: opacity 150ms ease-in-out;
+		transition: opacity 150ms ease-in-out;
+	}
+	#e1:hover .control {
+		opacity: 1;
+	}
+	#e1 .control-prev {
+		left: 0;
+	}
+	#e1 .control-next {
+		right: 0;
+	}
 
 
 	#e2 {
@@ -87,7 +125,13 @@
 		top: 0;
 		width: 25%;
 		height: 100%;
-		background-color: #f0f;
+	}
+	#e2 img {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
 	}
 	#e2 li:nth-child(2) {left:25%;}
 	#e2 li:nth-child(3) {left:50%;}
@@ -126,8 +170,8 @@
 		float: left;
 		width: 300px;
 		height: 200px;
-		background-color: #ff0;
 	}
+
 	#e3-dots {
 		display: block;
 		position: absolute;
@@ -153,10 +197,10 @@
 		margin-left: 0;
 	}
 
-	.fb-1-sel #e3-dots li:nth-child(1) {background-color: #000000;}
-	.fb-2-sel #e3-dots li:nth-child(2) {background-color: #000000;}
-	.fb-3-sel #e3-dots li:nth-child(3) {background-color: #000000;}
-	.fb-4-sel #e3-dots li:nth-child(4) {background-color: #000000;}
+	.fb-1-sel #e3-dots li:nth-child(1) {background-color: #FFFFFF;}
+	.fb-2-sel #e3-dots li:nth-child(2) {background-color: #FFFFFF;}
+	.fb-3-sel #e3-dots li:nth-child(3) {background-color: #FFFFFF;}
+	.fb-4-sel #e3-dots li:nth-child(4) {background-color: #FFFFFF;}
 
 
 
@@ -169,27 +213,36 @@
 	</style>
 </head>
 <body>
-	<div id="content">
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<div class="navbar-brand"><b>Simple Pagination Examples</b></div>
+			</div>
+		</div>
+	</nav>
+	<div class="container" id="main-content">
 		<h1>Example 1</h1>
 		<div id="e1">
+			<a href="#" class="control control-prev">&lt;</a>
 			<ul>
-				<li>1</li>
-				<li>2</li>
-				<li>3</li>
-				<li>4</li>
+				<li><img src="http://lorempixel.com/300/200/nature/?v1" /></li>
+				<li><img src="http://lorempixel.com/300/200/nature/?v2" /></li>
+				<li><img src="http://lorempixel.com/300/200/nature/?v3" /></li>
+				<li><img src="http://lorempixel.com/300/200/nature/?v4" /></li>
 			</ul>
+			<a href="#" class="control control-next">&gt;</a>
 		</div>
-
+		<hr />
 		<h1>Example 2</h1>
 		<div id="e2">
 			<ul>
-				<li>1</li>
-				<li>2</li>
-				<li>3</li>
-				<li>4</li>
+				<li><img src="http://lorempixel.com/720/405/nature/?v1" /></li>
+				<li><img src="http://lorempixel.com/720/405/nature/?v2" /></li>
+				<li><img src="http://lorempixel.com/720/405/nature/?v3" /></li>
+				<li><img src="http://lorempixel.com/720/405/nature/?v4" /></li>
 			</ul>
 		</div>
-
+		<hr />
 		<h1>Example 3</h1>
 		<div id="e3" class="fb-1-sel">
 			<ul id="e3-dots">
@@ -199,27 +252,47 @@
 				<li></li>
 			</ul>
 			<ul id="e3-items">
-				<li>1</li>
-				<li>2</li>
-				<li>3</li>
-				<li>4</li>
+				<li><img src="http://lorempixel.com/300/200/nature/?v1" /></li>
+				<li><img src="http://lorempixel.com/300/200/nature/?v2" /></li>
+				<li><img src="http://lorempixel.com/300/200/nature/?v3" /></li>
+				<li><img src="http://lorempixel.com/300/200/nature/?v4" /></li>
 			</ul>
 		</div>
-	</div>
+	</div> <!-- /container -->
+	<footer id="main-footer">
+		<div class="container" id="footer-content">
+			&copy; Nathan Smith. All rights reserved
+		</div>
+	</footer>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
-	<script src="https://rawgit.com/nathanjosiah/simple-pagination/73e7eb3eb39dc29b9bfe42463d1bee93cce39f03/simple-pagination.js"></script>
+	<script src="simple-pagination.js"></script>
 	<script>
 	$(function() {
-		$('#e1').simplePagination();
+		var e1index = 1;
+		$('#e1').simplePagination({
+			onChange: function(index) {
+				e1index = index;
+			}
+		});
+		$('#e1 .control-prev').on('click',function(e) {
+			if(e1index === 1) return;
+			$('#e1').simplePagination('gotoPage',e1index-1);
+		});
+		$('#e1 .control-next').on('click',function(e) {
+			if(e1index === 4) return;
+			$('#e1').simplePagination('gotoPage',e1index+1);
+		});
+
 		$('#e2').simplePagination();
 
-		var possible_banner_classes = 'fb-1-sel fb-2-sel fb-3-sel fb-4-sel';
+		var e3index = 1;
 		$('#e3').simplePagination({
 			onChange: function(index) {
-				this.removeClass(possible_banner_classes).addClass('fb-' + index + '-sel');
+				this.removeClass('fb-' + e3index + '-sel').addClass('fb-' + index + '-sel');
 				$('#console').text('Page is now  #' + index);
+				e3index = index;
 			},
 			sliderSelector: '#e3-items',
 		});
