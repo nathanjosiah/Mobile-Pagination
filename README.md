@@ -3,6 +3,16 @@
 A responsive-friendly UI widget to add paginated swipable content to a page. This plugin gives you control (if 
 you need it) to define just how the user can interact with it.
 
+Installation
+--
+
+Simply include the `simple-pagination.js` file. 
+
+This is also available as bower package `nathanjosiah-simple-pagination` (install with `bower install nathanjosiah-simple-pagination`).
+
+_**AMD Compatible**. Make sure `jquery` and `jquery-ui` are available dependencies (`jquery-ui` need only be the widget factory)_
+
+
 Example Use
 --
 
