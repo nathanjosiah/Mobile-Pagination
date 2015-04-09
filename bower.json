@@ -1,0 +1,14 @@
+{
+  "name": "Simple-Pagination",
+  "version": "1.0.0",
+  "homepage": "http://nathanjosiah.github.io/Simple-Pagination/",
+  "authors": [
+    "Nathan Smith <nathanjosiah@gmail.com>"
+  ],
+  "description": "A simple responsive pagination widget to add swiping capabilities to a list of items on desktop or mobile devices.",
+  "main": "simple-pagination.js",
+  "moduleType": [
+    "globals"
+  ],
+  "license": "MIT"
+}
