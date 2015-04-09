@@ -8,7 +8,8 @@
   "description": "A simple responsive pagination widget to add swiping capabilities to a list of items on desktop or mobile devices.",
   "main": "simple-pagination.js",
   "moduleType": [
-    "globals"
+    "globals",
+    "amd"
   ],
   "license": "MIT"
 }

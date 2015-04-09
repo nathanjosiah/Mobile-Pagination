@@ -2,6 +2,15 @@
  * @author Nathan Smith <nathanjosiah@gmail.com>
  * @link https://github.com/nathanjosiah/Simple-Pagination
  */
+;(function (factory) {
+	if (typeof define === 'function' && define.amd) {
+		define(['jquery','jquery-ui'],factory);
+	}
+	else {
+		factory(jQuery);
+	}
+}(function ($) {
+
 $.widget('nathanjosiah.simplePagination',{
 	options: {
 		touchingClass: 'is_touching',
@@ -225,3 +234,6 @@ $.widget('nathanjosiah.simplePagination',{
 		this.fb.current.scroll = offset;
 	}
 });
+
+
+}));
