@@ -146,6 +146,10 @@ $.widget('nathanjosiah.simplePagination',{
 			x: touch.clientX,
 			y: touch.clientY
 		};
+		this.touches.delta = {
+			x: 0,
+			y: 0
+		};
 		this.fb.start.container_offset = this.$container.offset();
 		this.fb.start.scroll = this.fb.current.scroll;
 		this.touches.start_relative = {
@@ -218,6 +222,25 @@ $.widget('nathanjosiah.simplePagination',{
 		if(this.options.onChange) {
 			this.options.onChange.call(this.$container,this.fb.slide_index);
 		}
+	},
+	nextPage: function() {
+		if(this.fb.slide_index === this.pageCount - 1) {
+			this.$slider.addClass(this.options.touchingClass);
+			this.scrollPages($.proxy(this.options.pageOffset,this)(this.fb.slide_index -1) * -1);
+			this.$slider.removeClass(this.options.touchingClass);
+		}
+		if(this.fb.slide_index === this.pageCount) {
+			this.gotoPage(1);
+			return;
+		}
+		this.gotoPage(this.fb.slide_index + 1);
+	},
+	prevPage: function() {
+		if(this.fb.slide_index === 1) {
+			this.gotoPage(this.pageCount);
+			return;
+		}
+		this.gotoPage(this.fb.slide_index - 1);
 	},
 	scrollPages: function(offset) {
 		if(this.shouldUseTransforms) {
